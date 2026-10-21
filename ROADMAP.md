@@ -19,3 +19,17 @@ usage never counts them. Doing so takes:
 
 Worth doing once a hosted server plugs in a real payer (Billing.ts is
 free here, so it would do nothing in this repo).
+
+Spend and context in the page
+-----------------------------
+
+A self-hosted server (free Billing.ts) shows no credit, and no server
+shows how much context a call used. Both could come from what is already
+told: each response's `Usage` (Agent.ts `used`, Price.ts `cost`).
+
+- a spend counter: the running total in USD of the chat's calls (turns,
+  summaries, agents; plus the web tools once they are billed, above),
+  shown where `.credits` is when the server doesn't bill;
+- the context length: the last turn's input tokens (input + cache read +
+  cache write), against the model's window, next to the model knob.
+  Needs each model's window in Pick.ts's `Model`.
