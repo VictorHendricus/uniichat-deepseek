@@ -30,6 +30,7 @@ import { clip_page } from "./Clip.ts";
 import * as config from "./Config.ts";
 import { COMPUTER, INT, STR, TOOLS, spec, type Job, type Spec } from "./Machine.ts";
 import { Memory } from "./Memory.ts";
+import { WEB, Web } from "./Web.ts";
 import PROMPT from "./prompt.txt" with { type: "text" };
 import { EFFORTS, Pick } from "./Pick.ts";
 import type { Live } from "./View.ts";
@@ -189,7 +190,8 @@ const DEVICES_NONE = "(None is open now.)";
 // a subagent's prompt: its part, then the view's and the devices' docs
 const SUB = SUB_HEAD + "\n\n" + VIEW_DOC + "\n\n" + DEVICES;
 
-// the tools of everyone (OWN), the master's (BOSS), those that run on a
+// the tools of everyone (OWN), the web's (Web.ts: deepseek-api's), the
+// master's (BOSS), those that run on a
 // device (`kit`: Machine.ts's), and the master's computer tasks (HAND),
 // whose agents get only COMPUTER, on their device
 const OWN: Spec[] = [
@@ -334,10 +336,18 @@ export namespace Tools {
   }
 
   export function list(tools: Tools, who: string): Spec[] {
+    const web = Tools.web(tools, who) ? WEB : [];
     if (who === "main") {
-      return [...OWN, ...BOSS, ...kit(who), HAND];
+      return [...OWN, ...web, ...BOSS, ...kit(who), HAND];
     }
-    return tools.agents.get(who)?.role.$ === "hands" ? [COMPUTER] : [...OWN, ...kit(who)];
+    return tools.agents.get(who)?.role.$ === "hands" ? [COMPUTER] : [...OWN, ...web, ...kit(who)];
+  }
+
+  // whether a caller gets the web tools: its model has none of its own
+  // (deepseek-api), and the key for them is here
+  export function web(tools: Tools, who: string): boolean {
+    const pick = who === "main" ? tools.hooks.pick() : (config.AGENTS ?? tools.hooks.pick());
+    return pick.vendor === "deepseek-api" && Web.on();
   }
 
   // id: a job's, if it starts one
@@ -366,6 +376,10 @@ export namespace Tools {
       }
       case "tell": {
         return { text: await Tools.tell(tools, String(args.name), String(args.message)), fail: false };
+      }
+      case "search":
+      case "fetch": {
+        return Web.call(name, args, signal);
       }
       case "computer": {
         const role = tools.agents.get(who)?.role;

@@ -77,7 +77,7 @@ process.exit(0);
 test("a turn's wait names the model it runs on, not one picked since", async () => {
   const dir = fs.mkdtempSync(os.tmpdir() + "/unii-server-");
   fs.writeFileSync(dir + "/turn.ts", TURN);
-  const proc = Bun.spawn([process.execPath, dir + "/turn.ts"], { env: { ...process.env, UNII_DIR: dir }, stdout: "pipe", stderr: "inherit" });
+  const proc = Bun.spawn([process.execPath, dir + "/turn.ts"], { env: { ...process.env, UNII_DIR: dir, UNII_VENDORS: "claude-api", UNII_PICK: "claude-api:sonnet-5.5:medium:slow", UNII_COMPACTOR: "claude-api:haiku-5.5:high:slow" }, stdout: "pipe", stderr: "inherit" });
   const out = JSON.parse((await new Response(proc.stdout).text()).trim().split("\n").at(-1) ?? "{}");
   expect(out.model).toMatch(/\w/);
   expect(out.to).not.toBe(out.model);

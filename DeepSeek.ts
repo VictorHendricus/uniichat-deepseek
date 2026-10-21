@@ -4,8 +4,8 @@
 // is OpenAI's (OpenAI.ts) less a few things: no service tier (one
 // speed), no cache markers (it caches by itself), no tool-call cap, no
 // reasoning summary (the thought is streamed and returned in full), and
-// the developer role reads as a user's. Web search is DeepSeek's own,
-// only on SEARCHER; images are only for the others.
+// the developer role reads as a user's. It has no web search in the call:
+// its web tools are ordinary ones (Web.ts, Tools.ts).
 
 import type { Ask } from "./AskAI.ts";
 import { type Emit, type Entry, type Item, type Step, type Tool, type Wire } from "./Agent.ts";
@@ -18,12 +18,6 @@ import { OpenAI } from "./OpenAI.ts";
 // a stream read so far: the final response, or an error event; usage
 type State = { res: any; error: any; use: Usage };
 
-// Constants
-// =========
-
-// the one model that searches the web
-const SEARCHER = "deepseek-v4-pro";
-
 // DeepSeek
 // ========
 
@@ -33,10 +27,7 @@ export namespace DeepSeek {
     if (ask.speed !== "slow") {
       throw new Error("DeepSeek has no speed " + ask.speed);
     }
-    const defs: object[] = tools.map((t) => ({ type: "function", name: t.name, description: t.info, parameters: t.schema }));
-    if (ask.searches > 0 && ask.model === SEARCHER) {
-      defs.push({ type: "web_search" });
-    }
+    const defs = tools.map((t) => ({ type: "function", name: t.name, description: t.info, parameters: t.schema }));
     return {
       model             : ask.model,
       stream            : true,
@@ -65,11 +56,11 @@ export namespace DeepSeek {
     return OpenAI.read(st, ev, on);
   }
 
-  // the messages of an output item: OpenAI's, but a thought is its text
+  // the messages of an output item: OpenAI's, but a thought is the text
+  // of its content (it has no summary)
   export function entries(o: any): Entry[] {
     if (o.type === "reasoning") {
-      const parts = [...(o.content ?? []), ...(o.summary ?? [])];
-      const text = parts.map((p: any) => p.text ?? "").join("\n\n").trim();
+      const text = (o.content ?? []).map((p: any) => p.text ?? "").join("").trim();
       return text ? [{ kind: "mind", text }] : [];
     }
     return OpenAI.entries(o);

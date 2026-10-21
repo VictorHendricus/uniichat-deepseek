@@ -32,6 +32,9 @@ const FIRST = 1500;
 const DIR   = fs.mkdtempSync(os.tmpdir() + "/unii-cache-");
 
 process.env.UNII_DIR = DIR;
+process.env.UNII_VENDORS   = "claude-api";
+process.env.UNII_PICK      = "claude-api:sonnet-5.5:medium:slow";
+process.env.UNII_COMPACTOR = "claude-api:haiku-5.5:high:slow";
 
 // a process reads Config once (maybe for another test): the fake key goes
 // in it, not in the environment

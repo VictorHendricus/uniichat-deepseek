@@ -16,12 +16,12 @@ export type Usage = Rate & { searches: number; seconds: number; speed: string };
 // Constants
 // =========
 
-// USD per web search (Anthropic and OpenAI: $10 per 1,000; DeepSeek:
-// $0.75 per 1,000, from 2026-11-01)
+// USD per web search (Anthropic and OpenAI: $10 per 1,000); DeepSeek's
+// model has none: its web tools are not billed (ROADMAP.md)
 const SEARCH = 0.01;
 
 const SEARCHES: Record<string, number> = {
-  "deepseek-v4-pro" : 0.00075,
+  "deepseek-flash" : 0,
 };
 
 const RATES: Record<string, Rate> = {
@@ -32,7 +32,6 @@ const RATES: Record<string, Rate> = {
   "gpt-6.1-sol"       : { input: 2,   write: 2,    read: 0.1,  output: 10  },
   "gpt-6-luna"        : { input: 0.1, write: 0.1,  read: 0.01, output: 0.5 },
   "deepseek-flash"    : { input: 0.3, write: 0.3,  read: 0.006, output: 1.2 },
-  "deepseek-v4-pro"   : { input: 1.32, write: 1.32, read: 0.044, output: 3.96 },
 };
 
 // a prompt (its input, cache writes and reads) over PROMPT tokens costs a

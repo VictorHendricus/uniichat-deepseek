@@ -47,8 +47,7 @@ const OPENAI: Model[] = [
 ];
 
 const DEEPSEEK: Model[] = [
-  { label: "deepseek-flash",  id: "deepseek-flash",  speeds: ["slow"] },
-  { label: "deepseek-v4-pro", id: "deepseek-v4-pro", speeds: ["slow"] },
+  { label: "deepseek-flash", id: "deepseek-flash", speeds: ["slow"] },
 ];
 
 // each vendor's models, at the speeds it runs them

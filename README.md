@@ -42,10 +42,10 @@ AskAI.ts (model calls and the cache).
 Run it
 ------
 
-You need [Bun](https://bun.sh) and an Anthropic API key (or an OpenAI
-one, below).
+You need [Bun](https://bun.sh) and a DeepSeek API key (or an Anthropic
+or an OpenAI one, below).
 
-    export ANTHROPIC_API_KEY=sk-ant-...
+    export DEEPSEEK_API_KEY=sk-...
     bun Server.ts                    # http://127.0.0.1:8788, data in ~/.unii
 
 Then open http://127.0.0.1:8788 and type your email. With no mail key
@@ -77,13 +77,13 @@ also be set as the variable `UNII_<KEY>`:
 - `site`: the server's origin, for sign-in links (default
   http://127.0.0.1:8788). Another port: `UNII_SITE=http://127.0.0.1:9000
   bun Server.ts 9000`.
-- `vendors`: what the server offers, comma-separated: `claude-api`
-  (default), `openai-api`, `deepseek-api`.
+- `vendors`: what the server offers, comma-separated: `deepseek-api`
+  (default), `claude-api`, `openai-api`.
 - `models`: the models offered, by label (Pick.ts; default all).
 - `pick`: what a chat runs on until it picks another,
-  `vendor:model:effort:speed` (default `claude-api:sonnet-5.5:medium:slow`).
+  `vendor:model:effort:speed` (default `deepseek-api:deepseek-flash:medium:slow`).
 - `compactor`: what writes the summaries (default
-  `claude-api:haiku-5.5:high:slow`).
+  `deepseek-api:deepseek-flash:high:slow`).
 - `agents`: what subagents run on (default: the chat's pick).
 - `work`: the agents' working dirs on each device (default
   ~/.unii/work).
@@ -94,20 +94,25 @@ also be set as the variable `UNII_<KEY>`:
   honors its `x-unii-worker` header (Server.ts explains).
 - `apple`, `apns`: the iOS app's App ID and push key id (ios/).
 
-Keys are read from the environment: `ANTHROPIC_API_KEY`,
-`OPENAI_API_KEY`, `DEEPSEEK_API_KEY`, `RESEND_API_KEY` (to email sign-in links; none: they
+Keys are read from the environment: `DEEPSEEK_API_KEY`,
+`ANTHROPIC_API_KEY`, `OPENAI_API_KEY` (also for voice: DeepSeek has no
+transcription), `RESEND_API_KEY` (to email sign-in links; none: they
 print), `APNS_KEY`.
+
+With Claude, set `vendors`, `pick` and `compactor` to `claude-api`
+models, e.g. `UNII_VENDORS=claude-api
+UNII_PICK=claude-api:sonnet-5.5:medium:slow
+UNII_COMPACTOR=claude-api:haiku-5.5:high:slow`. Several vendors may be
+offered together: `UNII_VENDORS=deepseek-api,claude-api`.
 
 With only an OpenAI key, set `vendors`, `pick` and `compactor` to
 `openai-api` models, e.g. `UNII_VENDORS=openai-api
 UNII_PICK=openai-api:gpt-6.1-sol:medium:slow
 UNII_COMPACTOR=openai-api:gpt-6-luna:high:slow`.
 
-With DeepSeek, set `vendors`, `pick` and `compactor` to `deepseek-api`
-models (`deepseek-flash`, `deepseek-v4-pro`; only the latter searches the
-web), e.g. `UNII_VENDORS=deepseek-api
-UNII_PICK=deepseek-api:deepseek-v4-pro:medium:slow`. Voice still needs
-`OPENAI_API_KEY` (DeepSeek has no transcription).
+DeepSeek's model (`deepseek-flash`) has no web search of its own: its
+chats get the tools `search` and `fetch` instead, on DeepSeek's Search and
+Fetch APIs, with the same key (Web.ts).
 
 A self-hosted server is free: it bills no one, shows no prices, and calls
 only the model vendors. Billing.ts is the one place a hosted server

@@ -87,7 +87,7 @@ const USAGE = `Usage: unii [url]           the chat (url: $UNII_URL, else https:
        unii version         this unii's version
        unii serve [port]    your own UniiChat server, at http://127.0.0.1:8788
                             (another port: set UNII_SITE to its address too),
-                            on your ANTHROPIC_API_KEY, OPENAI_API_KEY and DEEPSEEK_API_KEY;
+                            on your DEEPSEEK_API_KEY (or ANTHROPIC_API_KEY, OPENAI_API_KEY);
                             chat with it: unii http://127.0.0.1:8788
        unii help            this
 UNII_WORK: where the agent works on this computer (default

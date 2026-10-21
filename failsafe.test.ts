@@ -18,6 +18,9 @@ import * as os from "node:os";
 const DIR = fs.mkdtempSync(os.tmpdir() + "/unii-failsafe-");
 
 process.env.UNII_DIR = DIR;
+process.env.UNII_VENDORS   = "claude-api";
+process.env.UNII_PICK      = "claude-api:sonnet-5.5:medium:slow";
+process.env.UNII_COMPACTOR = "claude-api:haiku-5.5:high:slow";
 
 // a process reads Config once (maybe for another test)
 const config = await import("./Config.ts");

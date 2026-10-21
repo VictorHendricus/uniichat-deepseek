@@ -143,7 +143,7 @@ const AGAIN = 60e3;
 export const TTL: Record<Vendor, number> = {
   "claude-api" : 300e3,
   "openai-api" : 1800e3,
-  "deepseek-api" : 300e3,
+  "deepseek-api" : 1800e3,
 };
 
 // the prefixes cached, by key (AskAI.keys)
