@@ -78,7 +78,7 @@ also be set as the variable `UNII_<KEY>`:
   http://127.0.0.1:8788). Another port: `UNII_SITE=http://127.0.0.1:9000
   bun Server.ts 9000`.
 - `vendors`: what the server offers, comma-separated: `claude-api`
-  (default), `openai-api`.
+  (default), `openai-api`, `deepseek-api`.
 - `models`: the models offered, by label (Pick.ts; default all).
 - `pick`: what a chat runs on until it picks another,
   `vendor:model:effort:speed` (default `claude-api:sonnet-5.5:medium:slow`).
@@ -95,13 +95,19 @@ also be set as the variable `UNII_<KEY>`:
 - `apple`, `apns`: the iOS app's App ID and push key id (ios/).
 
 Keys are read from the environment: `ANTHROPIC_API_KEY`,
-`OPENAI_API_KEY`, `RESEND_API_KEY` (to email sign-in links; none: they
+`OPENAI_API_KEY`, `DEEPSEEK_API_KEY`, `RESEND_API_KEY` (to email sign-in links; none: they
 print), `APNS_KEY`.
 
 With only an OpenAI key, set `vendors`, `pick` and `compactor` to
 `openai-api` models, e.g. `UNII_VENDORS=openai-api
 UNII_PICK=openai-api:gpt-6.1-sol:medium:slow
 UNII_COMPACTOR=openai-api:gpt-6-luna:high:slow`.
+
+With DeepSeek, set `vendors`, `pick` and `compactor` to `deepseek-api`
+models (`deepseek-flash`, `deepseek-v4-pro`; only the latter searches the
+web), e.g. `UNII_VENDORS=deepseek-api
+UNII_PICK=deepseek-api:deepseek-v4-pro:medium:slow`. Voice still needs
+`OPENAI_API_KEY` (DeepSeek has no transcription).
 
 A self-hosted server is free: it bills no one, shows no prices, and calls
 only the model vendors. Billing.ts is the one place a hosted server

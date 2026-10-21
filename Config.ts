@@ -46,6 +46,7 @@ export const APNS       = config_get("apns", "");
 const VARS: Record<string, string> = {
   anthropic       : "ANTHROPIC_API_KEY",
   openai          : "OPENAI_API_KEY",
+  deepseek        : "DEEPSEEK_API_KEY",
   resend          : "RESEND_API_KEY",
   apns            : "APNS_KEY",
 };

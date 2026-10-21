@@ -1,7 +1,7 @@
 // Price
 // =====
 // What a call costs, in micro-USD: its usage, as its vendor tells it, at
-// its model's RATES (list prices of 2026-10, USD per million tokens; LONG
+// its model's RATES (list prices of 2026-10, USD per million tokens, DeepSeek's at its peak hours'; LONG
 // past a long prompt) times SPEEDS, plus web searches; a recording, at
 // MINUTES. A request's payer books it (AskAI.ts Bill; Billing.ts), and
 // an import's estimate is priced by it.
@@ -16,8 +16,13 @@ export type Usage = Rate & { searches: number; seconds: number; speed: string };
 // Constants
 // =========
 
-// USD per web search (Anthropic and OpenAI: $10 per 1,000)
+// USD per web search (Anthropic and OpenAI: $10 per 1,000; DeepSeek:
+// $0.75 per 1,000, from 2026-11-01)
 const SEARCH = 0.01;
+
+const SEARCHES: Record<string, number> = {
+  "deepseek-v4-pro" : 0.00075,
+};
 
 const RATES: Record<string, Rate> = {
   "claude-opus-5-5"   : { input: 4,   write: 5,    read: 0.2,  output: 20  },
@@ -26,6 +31,8 @@ const RATES: Record<string, Rate> = {
   "gpt-6-astra"       : { input: 10,  write: 12.5, read: 1,    output: 50  },
   "gpt-6.1-sol"       : { input: 2,   write: 2,    read: 0.1,  output: 10  },
   "gpt-6-luna"        : { input: 0.1, write: 0.1,  read: 0.01, output: 0.5 },
+  "deepseek-flash"    : { input: 0.3, write: 0.3,  read: 0.006, output: 1.2 },
+  "deepseek-v4-pro"   : { input: 1.32, write: 1.32, read: 0.044, output: 3.96 },
 };
 
 // a prompt (its input, cache writes and reads) over PROMPT tokens costs a
@@ -70,7 +77,7 @@ export namespace Price {
     }
     const tokens = rate === undefined ? 0 : use.input * rate.input + use.write * rate.write + use.read * rate.read + use.output * rate.output;
     const audio  = minute === undefined ? 0 : (use.seconds / 60) * minute * 1e6;
-    return Math.ceil(tokens * Price.times(use.speed) + use.searches * SEARCH * 1e6 + audio);
+    return Math.ceil(tokens * Price.times(use.speed) + use.searches * (SEARCHES[model] ?? SEARCH) * 1e6 + audio);
   }
 
 }
